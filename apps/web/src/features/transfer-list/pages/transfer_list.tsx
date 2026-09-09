@@ -1,24 +1,34 @@
 "use client";
 
+import {
+  clearAdvancedTransferFilters,
+  createDefaultTransferFilters,
+  filterTransfers,
+} from "@/helpers/transfer-filter.helper";
 import { ArrowLeft, ArrowRightLeft, Plus } from "lucide-react";
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
-
-import useTransferListStore from "@/store/transferListStore";
+import Link from "next/link";
+import TransferFilters from "../components/transfer_filters";
 import TransferListTable from "../components/transfer_list_table";
+import type { TransferFilterValues } from "../types/transfer-filter.type";
+import useTransferListStore from "@/store/transferListStore";
 
 const TransferListPage = () => {
   const { accountId } = useParams<{ accountId: string }>();
-  const { transfers, totalCount, isLoading, error, loadTransfers } = useTransferListStore(
+  const { transfers, isLoading, error, loadTransfers } = useTransferListStore(
     useShallow((state) => ({
       transfers: state.transfers,
-      totalCount: state.totalCount,
       isLoading: state.isLoading,
       error: state.error,
       loadTransfers: state.loadTransfers,
     })),
+  );
+  const [filters, setFilters] = useState<TransferFilterValues>(createDefaultTransferFilters);
+  const filteredTransfers = useMemo(
+    () => filterTransfers(transfers, filters),
+    [filters, transfers],
   );
 
   useEffect(() => {
@@ -32,7 +42,7 @@ const TransferListPage = () => {
       <div className="mx-auto w-full max-w-7xl space-y-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          className=" lg:hidden inline-flex items-center gap-2 text-sm font-medium text-primary transition-colors hover:text-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
           Volver a mis productos
@@ -68,11 +78,17 @@ const TransferListPage = () => {
           </section>
         ) : (
           <>
+            <TransferFilters
+              appliedFilters={filters}
+              onMonthChange={(month) => setFilters((current) => ({ ...current, month }))}
+              onSearch={setFilters}
+              onClearAdvanced={() => setFilters((current) => clearAdvancedTransferFilters(current))}
+            />
             <div className="flex items-center justify-between rounded-xl border border-border bg-white px-4 py-3 shadow-sm sm:px-6">
               <p className="text-sm text-text-secondary">Movimientos encontrados</p>
-              <span className="text-lg font-semibold text-primary">{totalCount}</span>
+              <span className="text-lg font-semibold text-primary">{filteredTransfers.length}</span>
             </div>
-            <TransferListTable accountId={accountId} transfers={transfers} />
+            <TransferListTable accountId={accountId} transfers={filteredTransfers} />
           </>
         )}
       </div>

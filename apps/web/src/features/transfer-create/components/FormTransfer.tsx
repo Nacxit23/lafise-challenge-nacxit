@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRightLeft, WalletCards } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
@@ -11,8 +11,11 @@ import { useShallow } from "zustand/react/shallow";
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { FormInput } from "@/components/ui/form-input";
+import type { Transfer } from "@/features/transfer-list/types/transfer.type";
 import useAuthStore from "@/store/authStore";
 import useTransferListStore from "@/store/transferListStore";
+import ConfirmTransfer from "./ConfirmTransfer";
+import TransferSuccess from "./TransferSuccess";
 import {
   createTransferSchema,
   type CreateTransferFormValues,
@@ -25,6 +28,9 @@ interface FormTransferProps {
 
 const FormTransfer = ({ originAccount }: FormTransferProps) => {
   const router = useRouter();
+  const [pendingValues, setPendingValues] = useState<CreateTransferFormValues | null>(null);
+  const [completedTransfer, setCompletedTransfer] = useState<Transfer | null>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
   const {
     baseBalance,
     balanceAdjustment,
@@ -62,7 +68,7 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
       currency: "NIO",
     }).format(value);
 
-  const handleSubmit = async (values: CreateTransferFormValues) => {
+  const validateAvailableFunds = async (amount: number) => {
     let latestBalance = useTransferListStore.getState().getAvailableBalance(originAccount);
 
     if (latestBalance === null) {
@@ -74,27 +80,54 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
       toast.error("No fue posible consultar el saldo", {
         description: "Inténtalo nuevamente antes de realizar la transacción.",
       });
-      return;
+      return null;
     }
 
     latestBalance = Math.max(latestBalance, 0);
 
-    if (latestBalance <= 0 || values.amount > latestBalance) {
+    if (latestBalance <= 0 || amount > latestBalance) {
       const message = `Saldo disponible: ${formatBalance(latestBalance)}.`;
 
       form.setError("amount", { type: "manual", message: "El monto supera el saldo disponible" });
       toast.error("Fondos insuficientes", { description: message });
-      return;
+      return null;
     }
 
     form.clearErrors("amount");
+
+    return latestBalance;
+  };
+
+  const handleReview = async (values: CreateTransferFormValues) => {
+    const latestBalance = await validateAvailableFunds(values.amount);
+
+    if (latestBalance !== null) {
+      setPendingValues(values);
+    }
+  };
+
+  const handleConfirm = async () => {
+    if (!pendingValues || isConfirming) {
+      return;
+    }
+
+    setIsConfirming(true);
+
+    const latestBalance = await validateAvailableFunds(pendingValues.amount);
+
+    if (latestBalance === null) {
+      setPendingValues(null);
+      setIsConfirming(false);
+      return;
+    }
+
     try {
       const transfer = await createTransfer({
         origin: originAccount,
-        destination: values.destination,
+        destination: pendingValues.destination,
         amount: {
           currency: "NIO",
-          value: values.amount,
+          value: pendingValues.amount,
         },
       });
 
@@ -109,24 +142,57 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
       toast.success("Transacción realizada correctamente", {
         description: `Referencia ${transfer.transactionNumber}`,
       });
-      router.push(`/account-transactions/${originAccount}`);
+      setCompletedTransfer(transfer);
+      setPendingValues(null);
     } catch {
       toast.error("No fue posible realizar la transacción", {
         description: "Verifica los datos e inténtalo nuevamente.",
       });
+    } finally {
+      setIsConfirming(false);
     }
+  };
+
+  const handleCreateAnother = () => {
+    form.reset({ destination: "", amount: 1000 });
+    setCompletedTransfer(null);
+    setPendingValues(null);
   };
 
   const isSubmitting = form.formState.isSubmitting;
 
+  if (completedTransfer) {
+    return (
+      <TransferSuccess
+        transfer={completedTransfer}
+        onCreateAnother={handleCreateAnother}
+        onViewTransfers={() => router.push(`/account-transactions/${originAccount}`)}
+      />
+    );
+  }
+
+  if (pendingValues && availableBalance !== null) {
+    return (
+      <ConfirmTransfer
+        originAccount={originAccount}
+        values={pendingValues}
+        availableBalance={availableBalance}
+        isSubmitting={isConfirming}
+        onBack={() => setPendingValues(null)}
+        onConfirm={() => void handleConfirm()}
+      />
+    );
+  }
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(handleReview)}
         className="space-y-5 rounded-xl border border-border bg-white p-5 shadow-sm sm:p-6"
         noValidate
       >
         <div>
+          <p className="text-sm font-medium text-primary">Paso 1 de 3</p>
           <h2 className="text-lg font-semibold text-text">Datos de la transacción</h2>
           <p className="mt-1 text-sm text-text-secondary">
             Ingresa la cuenta destino y el monto que deseas transferir.
@@ -207,7 +273,7 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
             className="bg-primary hover:bg-primary-dark"
           >
             <ArrowRightLeft className="size-4" aria-hidden="true" />
-            {isSubmitting ? "Procesando..." : "Realizar transacción"}
+            {isSubmitting ? "Validando..." : "Continuar"}
           </Button>
         </div>
       </form>

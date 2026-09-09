@@ -42,13 +42,12 @@ const AccountInfo = () => {
     }
   }, [productNumber, loadAccount, setBaseBalance]);
 
-  const displayName = user?.fullName ?? "Cliente LAFISE";
   const availableBalance =
     baseBalance === undefined ? null : Math.max(baseBalance + balanceAdjustment, 0);
 
   return (
     <article className="rounded-xl border border-border bg-white p-5 shadow-sm sm:p-6">
-      <AccountHeader displayName={displayName} hasAccount={Boolean(account)} />
+      <AccountHeader hasAccount={Boolean(account)} />
       {isLoading || (account && availableBalance === null) ? (
         <p className="mt-8 text-sm text-text-secondary">Cargando información de la cuenta...</p>
       ) : error ? (

@@ -96,8 +96,8 @@ const TransferListTable = ({ accountId, transfers }: TransferListTableProps) => 
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center text-text-secondary">
-                  No hay movimientos registrados.
+                <TableCell colSpan={5} className="h-24 text-center text-text-secondary">
+                  No se encontraron movimientos con los filtros seleccionados.
                 </TableCell>
               </TableRow>
             )}

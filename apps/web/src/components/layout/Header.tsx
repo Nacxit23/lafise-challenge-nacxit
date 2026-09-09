@@ -7,6 +7,7 @@ import logoLafise from "@/assets/images/auth/logo-LAFISE.svg";
 
 import useAuthStore from "@/store/authStore";
 import { MobileMenuButton } from "@/components/layout/DashboardNavigation";
+import { Button } from "../ui/button";
 
 interface HeaderProps {
   onOpenMenu?: () => void;
@@ -66,7 +67,7 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
             <p className="text-sm font-medium">{displayName}</p>
             <p className="text-xs text-white/75">ID: {user?.id ?? "--"}</p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={clearAuth}
             className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
@@ -74,7 +75,7 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
             <LogOut className="size-4" aria-hidden="true" />
             <span className="hidden sm:inline">Cerrar sesión</span>
             <span className="sr-only sm:hidden">Cerrar sesión</span>
-          </button>
+          </Button>
         </div>
       </div>
     </header>
