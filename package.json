@@ -1,26 +1,17 @@
 {
-  "name": "lafise-challenge-website-app",
+  "name": "lafise-challenge-monorepo",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@1.22.22",
+  "workspaces": [
+    "apps/web"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.3.4",
-    "react": "19.2.8",
-    "react-dom": "19.2.8"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.3.4",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "dev": "node scripts/dev.mjs",
+    "dev:api": "npm --prefix apps/api run dev",
+    "dev:web": "yarn workspace @lafise/web dev",
+    "lint": "yarn workspace @lafise/web lint",
+    "build": "yarn workspace @lafise/web build",
+    "start": "yarn workspace @lafise/web start"
   }
 }
