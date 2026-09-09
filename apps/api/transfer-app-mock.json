@@ -9,57 +9,18 @@
   "folders": [],
   "routes": [
     {
-      "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a101",
+      "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c001",
       "type": "http",
-      "documentation": "Authenticate challenge user",
+      "documentation": "Simulated user authentication",
       "method": "post",
-      "endpoint": "auth/",
+      "endpoint": "auth/login",
       "responses": [
         {
-          "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a102",
-          "body": "{\n  \"userId\": 1\n}",
+          "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c002",
+          "body": "{\n  \"token\": \"mock-token-lafise-digital-2026\",\n  \"expiresIn\": 7200,\n  \"user\": {\n    \"id\": 1\n  }\n}",
           "latency": 0,
           "statusCode": 200,
-          "label": "Authenticated",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "bodyType": "INLINE",
-          "filePath": "",
-          "databucketID": "",
-          "sendFileAsBody": false,
-          "rules": [
-            {
-              "target": "body",
-              "modifier": "email",
-              "value": "josueperez@example.com",
-              "invert": false,
-              "operator": "equals"
-            },
-            {
-              "target": "body",
-              "modifier": "password",
-              "value": "lafisechallenger",
-              "invert": false,
-              "operator": "equals"
-            }
-          ],
-          "rulesOperator": "AND",
-          "disableTemplating": false,
-          "fallbackTo404": false,
-          "default": false,
-          "crudKey": "id",
-          "callbacks": []
-        },
-        {
-          "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a103",
-          "body": "{\n  \"type\": \"https://tools.ietf.org/html/rfc7235#section-3.1\",\n  \"title\": \"Invalid credentials\",\n  \"status\": 401\n}",
-          "latency": 0,
-          "statusCode": 401,
-          "label": "Invalid credentials",
+          "label": "Successful simulated login",
           "headers": [
             {
               "key": "Content-Type",
@@ -373,7 +334,7 @@
   "rootChildren": [
     {
       "type": "route",
-      "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a101"
+      "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c001"
     },
     {
       "type": "route",

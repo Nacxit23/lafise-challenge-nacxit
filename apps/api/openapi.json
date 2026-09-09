@@ -23,26 +23,42 @@
   ],
 
   "paths": {
-    "/auth/": {
+    "/auth/login": {
       "post": {
         "tags": [
           "Auth"
         ],
-        "summary": "Authenticate user",
-        "description": "Authenticate the challenge user and return its user ID.",
-        "operationId": "authenticate_user",
+        "summary": "Authenticate a user",
+        "description": "Authenticates a user and returns a mock session token.",
+        "operationId": "login",
         "requestBody": {
-          "description": "User credentials",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AuthRequest"
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "usuario@lafise.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "123456"
+                  }
+                }
               },
               "examples": {
-                "Example 1": {
+                "Example login": {
                   "value": {
-                    "email": "josueperez@example.com",
-                    "password": "lafisechallenger"
+                    "email": "usuario@lafise.com",
+                    "password": "123456"
                   }
                 }
               }
@@ -51,19 +67,49 @@
         },
         "responses": {
           "200": {
-            "description": "Authenticated",
+            "description": "Successful simulated login",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthResponse"
+                  "type": "object",
+                  "required": [
+                    "token",
+                    "expiresIn",
+                    "user"
+                  ],
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "mock-token-lafise-digital-2026"
+                    },
+                    "expiresIn": {
+                      "type": "integer",
+                      "example": 7200
+                    },
+                    "user": {
+                      "type": "object",
+                      "required": [
+                        "id"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
-          },
-          "401": {
-            "description": "Invalid credentials"
           }
-        }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5566",
+            "description": "Localhost"
+          }
+        ]
       }
     },
     "/users/{userId}": {

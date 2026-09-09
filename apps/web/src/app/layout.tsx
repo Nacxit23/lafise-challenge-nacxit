@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+import AuthLayout from "@/components/auth/AuthLayout";
+import { Toaster } from "sonner";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: "LAFISE Digital Banking",
@@ -9,11 +15,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html
-      lang="es"
-      className="h-full antialiased"
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="es" className={cn("h-full antialiased", "font-sans", geist.variable)}>
+      <body className="min-h-full flex flex-col">
+        <AuthLayout>{children}</AuthLayout>
+        <Toaster position="top-right" richColors closeButton />
+      </body>
     </html>
   );
 }

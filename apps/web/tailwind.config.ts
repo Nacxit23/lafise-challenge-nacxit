@@ -5,10 +5,10 @@ const config = {
       colors: {
         primary: "#018765", // EL verde es el principal de lafise(extraido de la marca)
         "primary-dark": "#004D38",
-        accent: "#10B981", 
+        accent: "#10B981",
         background: "#FFFFFF",
         surface: "#F3F4F6",
-        text: "#1F2937",// Gris 
+        text: "#1F2937", // Gris
         "text-secondary": "#6B7280", // Gris 1/2
         border: "#E5E7EB",
         success: "#10B981",
