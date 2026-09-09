@@ -2,13 +2,23 @@
 
 import { LogOut } from "lucide-react";
 import Image from "next/image";
+import { useShallow } from "zustand/react/shallow";
 import logoLafise from "@/assets/images/auth/logo-LAFISE.svg";
 
 import useAuthStore from "@/store/authStore";
+import { MobileMenuButton } from "@/components/layout/DashboardNavigation";
 
-const Header = () => {
-  const user = useAuthStore((state) => state.session?.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
+interface HeaderProps {
+  onOpenMenu?: () => void;
+}
+
+const Header = ({ onOpenMenu }: HeaderProps) => {
+  const { user, clearAuth } = useAuthStore(
+    useShallow((state) => ({
+      user: state.session?.user,
+      clearAuth: state.clearAuth,
+    })),
+  );
   const displayName = user?.fullName ?? "Cliente LAFISE";
 
   const initials = displayName
@@ -23,6 +33,7 @@ const Header = () => {
     <header className="border-b border-primary-dark/30 bg-primary text-white shadow-sm">
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4">
+          {onOpenMenu && <MobileMenuButton onClick={onOpenMenu} />}
           <Image
             src={logoLafise}
             alt="Logo de LAFISE"
