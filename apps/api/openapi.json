@@ -22,6 +22,95 @@
     }
   ],
   "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticate a user",
+        "description": "Authenticates a user and returns a mock session token.",
+        "operationId": "login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "usuario@lafise.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "123456"
+                  }
+                }
+              },
+              "examples": {
+                "Example login": {
+                  "value": {
+                    "email": "usuario@lafise.com",
+                    "password": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful simulated login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "token",
+                    "expiresIn",
+                    "user"
+                  ],
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "mock-token-lafise-digital-2026"
+                    },
+                    "expiresIn": {
+                      "type": "integer",
+                      "example": 7200
+                    },
+                    "user": {
+                      "type": "object",
+                      "required": [
+                        "id"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "servers": [
+          {
+            "url": "http://localhost:5566",
+            "description": "Localhost"
+          }
+        ]
+      }
+    },
     "/users/{userId}": {
       "get": {
         "tags": [
