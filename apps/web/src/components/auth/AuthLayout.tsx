@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import LoginAuth from "@/features/auth/pages/login";
 import useAuthStore from "@/store/authStore";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
 const AuthLayout = ({ children }: { children: ReactNode }) => {
   const session = useAuthStore((state) => state.session);
@@ -42,7 +43,7 @@ const AuthLayout = ({ children }: { children: ReactNode }) => {
 
   const isAuthenticated = session !== null && session.expiresAt > currentTime;
 
-  return isAuthenticated ? <>{children}</> : <LoginAuth />;
+  return isAuthenticated ? <DashboardLayout>{children}</DashboardLayout> : <LoginAuth />;
 };
 
 export default AuthLayout;
