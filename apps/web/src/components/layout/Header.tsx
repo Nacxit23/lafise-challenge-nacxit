@@ -2,13 +2,18 @@
 
 import { LogOut } from "lucide-react";
 import Image from "next/image";
+import { useShallow } from "zustand/react/shallow";
 import logoLafise from "@/assets/images/auth/logo-LAFISE.svg";
 
 import useAuthStore from "@/store/authStore";
 
 const Header = () => {
-  const user = useAuthStore((state) => state.session?.user);
-  const clearAuth = useAuthStore((state) => state.clearAuth);
+  const { user, clearAuth } = useAuthStore(
+    useShallow((state) => ({
+      user: state.session?.user,
+      clearAuth: state.clearAuth,
+    })),
+  );
   const displayName = user?.fullName ?? "Cliente LAFISE";
 
   const initials = displayName
