@@ -1,7 +1,6 @@
 import { Form, FormField } from "@/components/ui/form";
 import { FormInput } from "@/components/ui/form-input";
 
-import { login } from "@/features/auth/services/auth.service";
 import { loginSchema, type LoginForm } from "../schemas/auth.schema";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
@@ -9,11 +8,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import lafiseLogo from "@/assets/images/auth/logo-LAFISE.svg";
 import useAuthStore from "@/store/authStore";
-import { getExpiresAt } from "@/helpers/expireDate";
 
 const FormAuth = () => {
-  const setSession = useAuthStore((state) => state.setSession);
+  const signIn = useAuthStore((state) => state.signIn);
 
+  //
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -24,13 +23,7 @@ const FormAuth = () => {
 
   const handleSubmit = async (values: LoginForm) => {
     try {
-      const response = await login(values);
-
-      setSession({
-        token: response.token,
-        user: response.user,
-        expiresAt: getExpiresAt(response.expiresIn),
-      });
+      await signIn(values);
 
       toast.success("Sesión iniciada correctamente");
     } catch {
