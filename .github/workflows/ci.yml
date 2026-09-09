@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: lint-and-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v6
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22.x
+          cache: yarn
+
+      - name: Habilitar Yarn
+        run: corepack enable
+
+      - name: Instalar dependencias
+        run: yarn install --frozen-lockfile
+
+      - name: Ejecutar lint
+        run: yarn lint
+
+      - name: Ejecutar build
+        run: yarn build
