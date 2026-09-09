@@ -10,9 +10,10 @@ import TransferDialog from "./transfer_dialog";
 
 interface AccountActionsProps {
   account: Account;
+  productNumber: string;
 }
 
-const AccountActions = ({ account }: AccountActionsProps) => {
+const AccountActions = ({ account, productNumber }: AccountActionsProps) => {
   const [isTransferOpen, setIsTransferOpen] = useState(false);
 
   return (
@@ -24,7 +25,7 @@ const AccountActions = ({ account }: AccountActionsProps) => {
             Transferir
           </Button>
         </DialogTrigger>
-        <TransferDialog account={account} />
+        <TransferDialog account={account} productNumber={productNumber} />
       </Dialog>
     </div>
   );

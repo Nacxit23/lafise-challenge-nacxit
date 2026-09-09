@@ -15,6 +15,7 @@ import type { Account } from "../types/account.type";
 
 interface TransferDialogProps {
   account: Account;
+  productNumber: string;
 }
 
 const transferOptions: Array<{
@@ -37,13 +38,13 @@ const transferOptions: Array<{
   },
 ];
 
-const TransferDialog = ({ account }: TransferDialogProps) => {
+const TransferDialog = ({ account, productNumber }: TransferDialogProps) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const router = useRouter();
 
   const handleConfirm = (url: string) => {
     setSelectedOption(url);
-    router.push(`/account/${url}`);
+    router.push(`/account-transactions/${productNumber}/create?type=${url}`);
   };
 
   return (

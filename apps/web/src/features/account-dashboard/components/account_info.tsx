@@ -40,7 +40,7 @@ const AccountInfo = () => {
       ) : account ? (
         <>
           <AccountDescription account={account} />
-          <AccountActions account={account} />
+          {productNumber && <AccountActions account={account} productNumber={productNumber} />}
         </>
       ) : (
         <p className="mt-8 text-sm text-text-secondary">

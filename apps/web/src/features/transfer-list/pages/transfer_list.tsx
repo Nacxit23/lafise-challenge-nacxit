@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRightLeft } from "lucide-react";
+import { ArrowLeft, ArrowRightLeft, Plus } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
@@ -38,15 +38,24 @@ const TransferListPage = () => {
           Volver a mis productos
         </Link>
 
-        <section>
-          <div className="flex items-center gap-2 text-primary">
-            <ArrowRightLeft className="size-5" aria-hidden="true" />
-            <p className="text-sm font-medium">Historial de cuenta</p>
+        <section className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="flex items-center gap-2 text-primary">
+              <ArrowRightLeft className="size-5" aria-hidden="true" />
+              <p className="text-sm font-medium">Historial de cuenta</p>
+            </div>
+            <h1 className="mt-2 text-2xl font-semibold text-text sm:text-3xl">Movimientos</h1>
+            <p className="mt-2 text-sm text-text-secondary">
+              Consulta las transferencias realizadas desde y hacia tu cuenta.
+            </p>
           </div>
-          <h1 className="mt-2 text-2xl font-semibold text-text sm:text-3xl">Movimientos</h1>
-          <p className="mt-2 text-sm text-text-secondary">
-            Consulta las transferencias realizadas desde y hacia tu cuenta.
-          </p>
+          <Link
+            href={`/account-transactions/${accountId}/create`}
+            className="inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-white transition-colors hover:bg-primary-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <Plus className="size-4" aria-hidden="true" />
+            Nueva transacción
+          </Link>
         </section>
 
         {isLoading ? (
