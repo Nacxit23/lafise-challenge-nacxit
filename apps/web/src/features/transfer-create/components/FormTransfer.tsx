@@ -1,14 +1,17 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft, WalletCards } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useShallow } from "zustand/react/shallow";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { FormInput } from "@/components/ui/form-input";
+import useAuthStore from "@/store/authStore";
 import useTransferListStore from "@/store/transferListStore";
 import {
   createTransferSchema,
@@ -22,7 +25,23 @@ interface FormTransferProps {
 
 const FormTransfer = ({ originAccount }: FormTransferProps) => {
   const router = useRouter();
-  const addTransfer = useTransferListStore((state) => state.addTransfer);
+  const {
+    baseBalance,
+    balanceAdjustment,
+    isBalanceLoading,
+    balanceError,
+    loadAccountBalance,
+    addTransfer,
+  } = useTransferListStore(
+    useShallow((state) => ({
+      baseBalance: state.baseBalancesByAccount[originAccount],
+      balanceAdjustment: state.balanceAdjustmentsByAccount[originAccount] ?? 0,
+      isBalanceLoading: state.balanceLoadingByAccount[originAccount] ?? false,
+      balanceError: state.balanceErrorsByAccount[originAccount],
+      loadAccountBalance: state.loadAccountBalance,
+      addTransfer: state.addTransfer,
+    })),
+  );
   const form = useForm<CreateTransferFormValues>({
     resolver: zodResolver(createTransferSchema(originAccount)),
     defaultValues: {
@@ -30,8 +49,46 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
       amount: 1000,
     },
   });
+  const availableBalance =
+    baseBalance === undefined ? null : Math.max(baseBalance + balanceAdjustment, 0);
+
+  useEffect(() => {
+    void loadAccountBalance(originAccount);
+  }, [loadAccountBalance, originAccount]);
+
+  const formatBalance = (value: number) =>
+    new Intl.NumberFormat("es-NI", {
+      style: "currency",
+      currency: "NIO",
+    }).format(value);
 
   const handleSubmit = async (values: CreateTransferFormValues) => {
+    let latestBalance = useTransferListStore.getState().getAvailableBalance(originAccount);
+
+    if (latestBalance === null) {
+      await useTransferListStore.getState().loadAccountBalance(originAccount);
+      latestBalance = useTransferListStore.getState().getAvailableBalance(originAccount);
+    }
+
+    if (latestBalance === null) {
+      toast.error("No fue posible consultar el saldo", {
+        description: "Inténtalo nuevamente antes de realizar la transacción.",
+      });
+      return;
+    }
+
+    latestBalance = Math.max(latestBalance, 0);
+
+    if (latestBalance <= 0 || values.amount > latestBalance) {
+      const message = `Saldo disponible: ${formatBalance(latestBalance)}.`;
+
+      form.setError("amount", { type: "manual", message: "El monto supera el saldo disponible" });
+      toast.error("Fondos insuficientes", { description: message });
+      return;
+    }
+
+    form.clearErrors("amount");
+
     try {
       const transfer = await createTransfer({
         origin: originAccount,
@@ -42,7 +99,14 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
         },
       });
 
-      addTransfer(transfer);
+      const destinationIsAccountProduct =
+        useAuthStore
+          .getState()
+          .session?.user.products.some(
+            (product) => product.type === "Account" && product.id === transfer.destination,
+          ) ?? false;
+
+      addTransfer(transfer, destinationIsAccountProduct);
       toast.success("Transacción realizada correctamente", {
         description: `Referencia ${transfer.transactionNumber}`,
       });
@@ -70,6 +134,32 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
           </p>
         </div>
 
+        <div
+          className="flex items-center justify-between gap-4 rounded-xl bg-primary/10 px-4 py-3"
+          aria-live="polite"
+        >
+          <div className="flex items-center gap-3 text-primary-dark">
+            <span className="flex size-10 items-center justify-center rounded-lg bg-white text-primary shadow-sm">
+              <WalletCards className="size-5" aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-xs text-text-secondary">Saldo disponible</p>
+              <p className="mt-0.5 font-semibold">
+                {isBalanceLoading && availableBalance === null
+                  ? "Consultando..."
+                  : availableBalance === null
+                    ? "No disponible"
+                    : formatBalance(availableBalance)}
+              </p>
+            </div>
+          </div>
+          <span className="text-xs font-medium text-primary">NIO</span>
+        </div>
+
+        {balanceError && availableBalance === null && (
+          <p className="text-sm text-error">{balanceError}</p>
+        )}
+
         <div className="grid gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -89,7 +179,7 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
             name="amount"
             render={({ field }) => (
               <FormInput
-                label="Monto"
+                label="Monto que desea transferir"
                 type="number"
                 min="0.01"
                 step="0.01"
@@ -115,7 +205,7 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
           </Button>
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isBalanceLoading || availableBalance === null}
             className="bg-primary hover:bg-primary-dark"
           >
             <ArrowRightLeft className="size-4" aria-hidden="true" />

@@ -9,7 +9,7 @@ interface AccountState {
   selectedAccountId: string | null;
   isLoading: boolean;
   error: string | null;
-  loadAccount: (accountId: string) => Promise<void>;
+  loadAccount: (accountId: string) => Promise<Account | null>;
   clearAccount: () => void;
 }
 
@@ -27,12 +27,16 @@ const useAccountStore = create<AccountState>()(
         try {
           const account = await getAccountById(accountId);
           set({ account, isLoading: false });
+
+          return account;
         } catch {
           set({
             account: null,
             isLoading: false,
             error: "No fue posible cargar la información de la cuenta.",
           });
+
+          return null;
         }
       },
       clearAccount: () =>

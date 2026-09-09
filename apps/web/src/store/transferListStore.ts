@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import { getAccountById } from "@/features/account-dashboard/services/account.service";
 import { getAccountTransfers } from "@/features/transfer-list/services/transfer-list.service";
 import type { Transfer, TransferList } from "@/features/transfer-list/types/transfer.type";
 
@@ -11,12 +12,21 @@ interface TransferListState {
   next: number;
   totalCount: number;
   createdTransfersByAccount: Record<string, Transfer[]>;
+  baseBalancesByAccount: Record<string, number>;
   balanceAdjustmentsByAccount: Record<string, number>;
+  balanceLoadingByAccount: Record<string, boolean>;
+  balanceErrorsByAccount: Record<string, string | null>;
+  lastDemoIncomeAtByAccount: Record<string, number>;
   selectedAccountId: string | null;
   isLoading: boolean;
   error: string | null;
   loadTransfers: (accountId: string) => Promise<void>;
-  addTransfer: (transfer: Transfer) => void;
+  loadAccountBalance: (accountId: string) => Promise<void>;
+  setBaseBalance: (accountId: string, balance: number) => void;
+  getAvailableBalance: (accountId: string) => number | null;
+  addTransfer: (transfer: Transfer, creditDestination: boolean) => void;
+  initializeDemoIncomeSchedule: (accountId: string, startedAt: number) => void;
+  addDemoIncome: (transfer: Transfer, creditedAt: number) => void;
   clearTransfers: () => void;
 }
 
@@ -51,7 +61,11 @@ const useTransferListStore = create<TransferListState>()(
       next: emptyTransferList.next,
       totalCount: emptyTransferList.totalCount,
       createdTransfersByAccount: {},
+      baseBalancesByAccount: {},
       balanceAdjustmentsByAccount: {},
+      balanceLoadingByAccount: {},
+      balanceErrorsByAccount: {},
+      lastDemoIncomeAtByAccount: {},
       selectedAccountId: null,
       isLoading: false,
       error: null,
@@ -97,7 +111,67 @@ const useTransferListStore = create<TransferListState>()(
           });
         }
       },
-      addTransfer: (transfer) => {
+      loadAccountBalance: async (accountId) => {
+        set((state) => ({
+          balanceLoadingByAccount: {
+            ...state.balanceLoadingByAccount,
+            [accountId]: true,
+          },
+          balanceErrorsByAccount: {
+            ...state.balanceErrorsByAccount,
+            [accountId]: null,
+          },
+        }));
+
+        try {
+          const account = await getAccountById(accountId);
+
+          set((state) => ({
+            baseBalancesByAccount: {
+              ...state.baseBalancesByAccount,
+              [accountId]: account.balance,
+            },
+            balanceLoadingByAccount: {
+              ...state.balanceLoadingByAccount,
+              [accountId]: false,
+            },
+          }));
+        } catch {
+          set((state) => ({
+            balanceLoadingByAccount: {
+              ...state.balanceLoadingByAccount,
+              [accountId]: false,
+            },
+            balanceErrorsByAccount: {
+              ...state.balanceErrorsByAccount,
+              [accountId]: "No fue posible consultar el saldo de la cuenta.",
+            },
+          }));
+        }
+      },
+      setBaseBalance: (accountId, balance) => {
+        set((state) => ({
+          baseBalancesByAccount: {
+            ...state.baseBalancesByAccount,
+            [accountId]: balance,
+          },
+          balanceErrorsByAccount: {
+            ...state.balanceErrorsByAccount,
+            [accountId]: null,
+          },
+        }));
+      },
+      getAvailableBalance: (accountId) => {
+        const state = get();
+        const baseBalance = state.baseBalancesByAccount[accountId];
+
+        if (baseBalance === undefined) {
+          return null;
+        }
+
+        return baseBalance + (state.balanceAdjustmentsByAccount[accountId] ?? 0);
+      },
+      addTransfer: (transfer, creditDestination) => {
         set((state) => {
           const debitTransfer: Transfer = { ...transfer, transactionType: "Debit" };
           const creditTransfer: Transfer = { ...transfer, transactionType: "Credit" };
@@ -105,27 +179,34 @@ const useTransferListStore = create<TransferListState>()(
             [debitTransfer],
             state.createdTransfersByAccount[transfer.origin] ?? [],
           );
-          const destinationTransfers = mergeTransfers(
-            [creditTransfer],
-            state.createdTransfersByAccount[transfer.destination] ?? [],
-          );
           const createdTransfersByAccount = {
             ...state.createdTransfersByAccount,
             [transfer.origin]: originTransfers,
-            [transfer.destination]: destinationTransfers,
+            ...(creditDestination
+              ? {
+                  [transfer.destination]: mergeTransfers(
+                    [creditTransfer],
+                    state.createdTransfersByAccount[transfer.destination] ?? [],
+                  ),
+                }
+              : {}),
           };
           const balanceAdjustmentsByAccount = {
             ...state.balanceAdjustmentsByAccount,
             [transfer.origin]:
               (state.balanceAdjustmentsByAccount[transfer.origin] ?? 0) - transfer.amount.value,
-            [transfer.destination]:
-              (state.balanceAdjustmentsByAccount[transfer.destination] ?? 0) +
-              transfer.amount.value,
+            ...(creditDestination
+              ? {
+                  [transfer.destination]:
+                    (state.balanceAdjustmentsByAccount[transfer.destination] ?? 0) +
+                    transfer.amount.value,
+                }
+              : {}),
           };
           const selectedTransfer =
             state.selectedAccountId === transfer.origin
               ? debitTransfer
-              : state.selectedAccountId === transfer.destination
+              : creditDestination && state.selectedAccountId === transfer.destination
                 ? creditTransfer
                 : null;
 
@@ -144,6 +225,65 @@ const useTransferListStore = create<TransferListState>()(
           };
         });
       },
+      initializeDemoIncomeSchedule: (accountId, startedAt) => {
+        set((state) => {
+          if (state.lastDemoIncomeAtByAccount[accountId] !== undefined) {
+            return state;
+          }
+
+          return {
+            lastDemoIncomeAtByAccount: {
+              ...state.lastDemoIncomeAtByAccount,
+              [accountId]: startedAt,
+            },
+          };
+        });
+      },
+      addDemoIncome: (transfer, creditedAt) => {
+        set((state) => {
+          const destinationTransfer: Transfer = {
+            ...transfer,
+            transactionType: "Credit",
+          };
+          const destinationTransfers = mergeTransfers(
+            [destinationTransfer],
+            state.createdTransfersByAccount[transfer.destination] ?? [],
+          );
+          const createdTransfersByAccount = {
+            ...state.createdTransfersByAccount,
+            [transfer.destination]: destinationTransfers,
+          };
+          const balanceAdjustmentsByAccount = {
+            ...state.balanceAdjustmentsByAccount,
+            [transfer.destination]:
+              (state.balanceAdjustmentsByAccount[transfer.destination] ?? 0) +
+              transfer.amount.value,
+          };
+          const lastDemoIncomeAtByAccount = {
+            ...state.lastDemoIncomeAtByAccount,
+            [transfer.destination]: creditedAt,
+          };
+
+          if (state.selectedAccountId !== transfer.destination) {
+            return {
+              createdTransfersByAccount,
+              balanceAdjustmentsByAccount,
+              lastDemoIncomeAtByAccount,
+            };
+          }
+
+          const transfers = mergeTransfers([destinationTransfer], state.transfers);
+
+          return {
+            createdTransfersByAccount,
+            balanceAdjustmentsByAccount,
+            lastDemoIncomeAtByAccount,
+            transfers,
+            size: transfers.length,
+            totalCount: transfers.length,
+          };
+        });
+      },
       clearTransfers: () =>
         set({
           transfers: [],
@@ -152,7 +292,11 @@ const useTransferListStore = create<TransferListState>()(
           next: 0,
           totalCount: 0,
           createdTransfersByAccount: {},
+          baseBalancesByAccount: {},
           balanceAdjustmentsByAccount: {},
+          balanceLoadingByAccount: {},
+          balanceErrorsByAccount: {},
+          lastDemoIncomeAtByAccount: {},
           selectedAccountId: null,
           isLoading: false,
           error: null,
