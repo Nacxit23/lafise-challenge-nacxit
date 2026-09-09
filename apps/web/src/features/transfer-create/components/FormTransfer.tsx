@@ -88,7 +88,6 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
     }
 
     form.clearErrors("amount");
-
     try {
       const transfer = await createTransfer({
         origin: originAccount,
@@ -159,7 +158,6 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
         {balanceError && availableBalance === null && (
           <p className="text-sm text-error">{balanceError}</p>
         )}
-
         <div className="grid gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
