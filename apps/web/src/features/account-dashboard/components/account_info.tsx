@@ -15,7 +15,7 @@ interface AccountInfoProps {
   onTransfer?: (account: Account) => void;
 }
 
-const AccountInfo = ({ onView, onTransfer }: AccountInfoProps) => {
+const AccountInfo = ({ onView }: AccountInfoProps) => {
   const user = useAuthStore((state) => state.session?.user);
   const { account, isLoading, error, loadAccount } = useAccountStore(
     useShallow((state) => ({
@@ -46,7 +46,7 @@ const AccountInfo = ({ onView, onTransfer }: AccountInfoProps) => {
       ) : account ? (
         <>
           <AccountDescription account={account} />
-          <AccountActions account={account} onView={onView} onTransfer={onTransfer} />
+          <AccountActions account={account} onView={onView} />
         </>
       ) : (
         <p className="mt-8 text-sm text-text-secondary">
