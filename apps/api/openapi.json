@@ -21,7 +21,51 @@
       "description": "Localhost"
     }
   ],
+
   "paths": {
+    "/auth/": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Authenticate user",
+        "description": "Authenticate the challenge user and return its user ID.",
+        "operationId": "authenticate_user",
+        "requestBody": {
+          "description": "User credentials",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequest"
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "email": "josueperez@example.com",
+                    "password": "lafisechallenger"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
     "/users/{userId}": {
       "get": {
         "tags": [
@@ -262,6 +306,10 @@
   },
   "tags": [
     {
+      "name": "Auth",
+      "description": "Authentication endpoints"
+    },
+    {
       "name": "Accounts",
       "description": "Accounts Endpoints"
     },
@@ -361,7 +409,7 @@
       }
     },
     "schemas": {
-      "UserInfo": {
+    "UserInfo": {
         "type": "object",
         "description": "Represents basic user info",
         "properties": {
@@ -406,6 +454,39 @@
             ]
           }
         }
+      },
+      "AuthRequest": {
+        "type": "object",
+        "description": "Credentials used to authenticate the challenge user.",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "josueperez@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "lafisechallenger"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "AuthResponse": {
+        "type": "object",
+        "description": "Authenticated user identifier.",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "example": 1
+          }
+        },
+        "required": [
+          "userId"
+        ]
       },
       "Account": {
         "type": "object",

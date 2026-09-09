@@ -9,6 +9,79 @@
   "folders": [],
   "routes": [
     {
+      "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a101",
+      "type": "http",
+      "documentation": "Authenticate challenge user",
+      "method": "post",
+      "endpoint": "auth/",
+      "responses": [
+        {
+          "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a102",
+          "body": "{\n  \"userId\": 1\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Authenticated",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "email",
+              "value": "josueperez@example.com",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "password",
+              "value": "lafisechallenger",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a103",
+          "body": "{\n  \"type\": \"https://tools.ietf.org/html/rfc7235#section-3.1\",\n  \"title\": \"Invalid credentials\",\n  \"status\": 401\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Invalid credentials",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
       "uuid": "e945abbd-a3b5-47f9-a1fc-0c805c51ceed",
       "type": "http",
       "documentation": "Get User Info by User ID",
@@ -298,6 +371,10 @@
     }
   ],
   "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "2f32f8fd-6d4f-4d89-9f18-7bd1f4a5a101"
+    },
     {
       "type": "route",
       "uuid": "e945abbd-a3b5-47f9-a1fc-0c805c51ceed"
