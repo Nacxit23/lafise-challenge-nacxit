@@ -1,4 +1,4 @@
-import { CreditCard, LayoutGrid, WalletCards, type LucideIcon } from "lucide-react";
+import { CreditCard, WalletCards, type LucideIcon } from "lucide-react";
 
 export interface DashboardMenuItem {
   label: string;
@@ -19,11 +19,5 @@ export const dashboardMenuItems: DashboardMenuItem[] = [
     description: "Realiza tus pagos de forma segura",
     href: "/pagar",
     icon: CreditCard,
-  },
-  {
-    label: "Servicios",
-    description: "Administra tus servicios favoritos",
-    href: "/servicios",
-    icon: LayoutGrid,
   },
 ];
