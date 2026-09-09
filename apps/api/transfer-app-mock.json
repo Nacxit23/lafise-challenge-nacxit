@@ -9,6 +9,40 @@
   "folders": [],
   "routes": [
     {
+      "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c001",
+      "type": "http",
+      "documentation": "Simulated user authentication",
+      "method": "post",
+      "endpoint": "auth/login",
+      "responses": [
+        {
+          "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c002",
+          "body": "{\n  \"token\": \"mock-token-lafise-digital-2026\",\n  \"expiresIn\": 7200,\n  \"user\": {\n    \"id\": 1\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Successful simulated login",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null
+    },
+    {
       "uuid": "e945abbd-a3b5-47f9-a1fc-0c805c51ceed",
       "type": "http",
       "documentation": "Get User Info by User ID",
@@ -298,6 +332,10 @@
     }
   ],
   "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c001"
+    },
     {
       "type": "route",
       "uuid": "e945abbd-a3b5-47f9-a1fc-0c805c51ceed"
