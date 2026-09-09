@@ -1,5 +1,8 @@
 "use client";
 
+import { Eye } from "lucide-react";
+import Link from "next/link";
+
 import {
   Table,
   TableBody,
@@ -46,6 +49,7 @@ const AccountDashboardPage = () => {
                 <TableHead>Producto</TableHead>
                 <TableHead>Número de producto</TableHead>
                 <TableHead className="text-right">Estado</TableHead>
+                <TableHead className="text-right">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -59,11 +63,25 @@ const AccountDashboardPage = () => {
                         Activo
                       </span>
                     </TableCell>
+                    <TableCell className="text-right">
+                      {product.type === "Account" ? (
+                        <Link
+                          href={`/account-transactions/${product.id}`}
+                          className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-primary px-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          aria-label={`Ver transacciones de la cuenta ${product.id}`}
+                        >
+                          <Eye className="size-4" aria-hidden="true" />
+                          Ver
+                        </Link>
+                      ) : (
+                        <span className="text-text-secondary">—</span>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={3} className="h-24 text-center text-text-secondary">
+                  <TableCell colSpan={4} className="h-24 text-center text-text-secondary">
                     No hay productos asociados.
                   </TableCell>
                 </TableRow>

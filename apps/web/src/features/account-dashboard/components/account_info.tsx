@@ -5,17 +5,11 @@ import { useShallow } from "zustand/react/shallow";
 
 import useAuthStore from "@/store/authStore";
 import useAccountStore from "@/store/accountStore";
-import type { Account } from "../types/account.type";
 import AccountActions from "./account_actions";
 import AccountDescription from "./account_description";
 import AccountHeader from "./account_header";
 
-interface AccountInfoProps {
-  onView?: (account: Account) => void;
-  onTransfer?: (account: Account) => void;
-}
-
-const AccountInfo = ({ onView }: AccountInfoProps) => {
+const AccountInfo = () => {
   const user = useAuthStore((state) => state.session?.user);
   const { account, isLoading, error, loadAccount } = useAccountStore(
     useShallow((state) => ({
@@ -26,13 +20,13 @@ const AccountInfo = ({ onView }: AccountInfoProps) => {
     })),
   );
 
-  const accountId = user?.products.find((product) => product.type === "Account")?.id;
+  const productNumber = user?.products.find((product) => product.type === "Account")?.id;
 
   useEffect(() => {
-    if (accountId) {
-      void loadAccount(accountId);
+    if (productNumber) {
+      void loadAccount(productNumber);
     }
-  }, [accountId, loadAccount]);
+  }, [productNumber, loadAccount]);
 
   const displayName = user?.fullName ?? "Cliente LAFISE";
 
@@ -46,7 +40,7 @@ const AccountInfo = ({ onView }: AccountInfoProps) => {
       ) : account ? (
         <>
           <AccountDescription account={account} />
-          <AccountActions account={account} onView={onView} />
+          <AccountActions account={account} />
         </>
       ) : (
         <p className="mt-8 text-sm text-text-secondary">
