@@ -43,3 +43,12 @@ yarn dev:web
 yarn lint
 yarn build
 ```
+
+## Variables de entorno
+
+En producción, `apps/web` requiere la URL pública del mock. La variable se usa
+únicamente en el servidor de Next.js para evitar problemas de CORS en el navegador:
+
+```env
+API_URL=https://tu-api.onrender.com
+```

@@ -214,7 +214,7 @@
       "responses": [
         {
           "uuid": "434616e4-c378-4ffa-8fc4-ba4318ef2bca",
-          "body": "{\n  \"page\": 1,\n  \"size\": 10,\n  \"next\": 0,\n  \"total_count\": 1,\n  \"items\": [\n    {\n      \"transaction_number\": \"123456\",\n      \"description\": \"Paga quincenal\",\n      \"bank_description\": \"Banco\",\n      \"transaction_type\": \"Credit\",\n      \"amount\": {\n        \"currency\": \"NIO\",\n        \"value\": 1000.00\n      },\n      \"origin\": \"123456789\",\n      \"destination\": \"987654321\",\n      \"transaction_date\": \"{{dateFormat (faker 'date.recent' 100) 'yyyy-MM-dd\\'T\\'HH:mm:ssXX'}}\"\n    }\n  ]\n}",
+          "body": "{\n  \"page\": 1,\n  \"size\": 10,\n  \"next\": 0,\n  \"total_count\": 1,\n  \"items\": [\n    {\n      \"transaction_number\": \"123456\",\n      \"description\": \"Paga quincenal\",\n      \"bank_description\": \"Banco\",\n      \"transaction_type\": \"Credit\",\n      \"amount\": {\n        \"currency\": \"NIO\",\n        \"value\": 1000.00\n      },\n      \"origin\": \"123456789\",\n      \"destination\": \"987654321\",\n      \"transaction_date\": \"2026-08-15T12:00:00-06:00\"\n    }\n  ]\n}",
           "latency": 0,
           "statusCode": 200,
           "label": "Ok response",
