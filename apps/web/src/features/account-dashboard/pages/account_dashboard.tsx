@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import useAuthStore from "@/store/authStore";
 import AccountInfo from "@/features/account-dashboard/components/account_info";
+import ProductMobileList from "@/features/account-dashboard/components/product_mobile_list";
 
 const AccountDashboardPage = () => {
   const user = useAuthStore((state) => state.session?.user);
@@ -42,52 +43,56 @@ const AccountDashboardPage = () => {
             </p>
           </div>
 
-          <Table>
-            <TableCaption className="text-left">Listado de productos del cliente.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Producto</TableHead>
-                <TableHead>Número de producto</TableHead>
-                <TableHead className="text-right">Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.length > 0 ? (
-                products.map((product) => (
-                  <TableRow key={`${product.type}-${product.id}`}>
-                    <TableCell className="font-medium">{product.type}</TableCell>
-                    <TableCell>{product.id}</TableCell>
-                    <TableCell className="text-right">
-                      <span className="inline-flex rounded-full bg-success/15 px-2.5 py-1 text-xs font-medium text-primary-dark">
-                        Activo
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      {product.type === "Account" ? (
-                        <Link
-                          href={`/account-transactions/${product.id}`}
-                          className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-primary px-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                          aria-label={`Ver transacciones de la cuenta ${product.id}`}
-                        >
-                          <Eye className="size-4" aria-hidden="true" />
-                          Ver
-                        </Link>
-                      ) : (
-                        <span className="text-text-secondary">—</span>
-                      )}
+          <ProductMobileList products={products} />
+
+          <div className="hidden md:block">
+            <Table>
+              <TableCaption className="text-left">Listado de productos del cliente.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Producto</TableHead>
+                  <TableHead>Número de producto</TableHead>
+                  <TableHead className="text-right">Estado</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {products.length > 0 ? (
+                  products.map((product) => (
+                    <TableRow key={`${product.type}-${product.id}`}>
+                      <TableCell className="font-medium">{product.type}</TableCell>
+                      <TableCell>{product.id}</TableCell>
+                      <TableCell className="text-right">
+                        <span className="inline-flex rounded-full bg-success/15 px-2.5 py-1 text-xs font-medium text-primary-dark">
+                          Activo
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {product.type === "Account" ? (
+                          <Link
+                            href={`/account-transactions/${product.id}`}
+                            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg border border-primary px-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                            aria-label={`Ver transacciones de la cuenta ${product.id}`}
+                          >
+                            <Eye className="size-4" aria-hidden="true" />
+                            Ver
+                          </Link>
+                        ) : (
+                          <span className="text-text-secondary">—</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-24 text-center text-text-secondary">
+                      No hay productos asociados.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center text-text-secondary">
-                    No hay productos asociados.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </section>
       </div>
     </div>

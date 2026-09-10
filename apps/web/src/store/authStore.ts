@@ -9,6 +9,7 @@ import { getExpiresAt } from "@/helpers/expireDate";
 interface AuthSession {
   token: string;
   expiresAt: number;
+  lastLoginAt?: number;
   user: User;
 }
 
@@ -20,6 +21,7 @@ interface AuthState {
   setSession: (session: AuthSession) => void;
   clearAuth: () => void;
   setHydrated: (hydrated: boolean) => void;
+  ensureLastLoginAt: () => void;
 }
 
 /**
@@ -42,6 +44,7 @@ const useAuthStore = create<AuthState>()(
           session: {
             token: response.token,
             expiresAt: getExpiresAt(response.expiresIn),
+            lastLoginAt: Date.now(),
             user: response.user,
           },
         });
@@ -58,11 +61,19 @@ const useAuthStore = create<AuthState>()(
       clearAuth: () => set({ session: null }),
       /** Indica que Zustand terminó de recuperar la sesión persistida. */
       setHydrated: (hydrated) => set({ hydrated }),
+      /** Completa la fecha para sesiones creadas antes de incorporar este dato. */
+      ensureLastLoginAt: () =>
+        set((state) =>
+          state.session && state.session.lastLoginAt === undefined
+            ? { session: { ...state.session, lastLoginAt: Date.now() } }
+            : state,
+        ),
     }),
     {
       name: "lafise-auth-session",
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
+        state?.ensureLastLoginAt();
 
         if (state?.session && !state.session.user.fullName) {
           void state.loadUser(state.session.user.id);
