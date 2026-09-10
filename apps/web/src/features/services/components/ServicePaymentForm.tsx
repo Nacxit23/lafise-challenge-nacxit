@@ -1,14 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileText, WalletCards } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { useShallow } from "zustand/react/shallow";
 
-import { serviceBills } from "@/data/service-bills";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { FormInput } from "@/components/ui/form-input";
@@ -86,13 +85,8 @@ const ServicePaymentForm = ({ accountId }: ServicePaymentFormProps) => {
     latestBalance = Math.max(latestBalance, 0);
 
     if (latestBalance <= 0 || amount > latestBalance) {
-      const description =
-        amount > latestBalance
-          ? `El costo del servicio supera tu saldo disponible (${formatAmount(latestBalance)}).`
-          : `Saldo disponible: ${formatAmount(latestBalance)}.`;
-
       toast.error("No puede realizar la transacción por saldo insuficiente", {
-        description,
+        description: `Saldo disponible: ${formatAmount(latestBalance)}.`,
       });
       return null;
     }
@@ -216,14 +210,6 @@ const ServicePaymentForm = ({ accountId }: ServicePaymentFormProps) => {
           </p>
         </div>
 
-        <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm leading-6 text-text-secondary">
-          <WalletCards className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-          <p>
-            Esta consulta es demostrativa. El costo se obtiene de datos locales y el pago se
-            registra como un débito simulado.
-          </p>
-        </div>
-
         {balanceError && availableBalance === null && (
           <p className="text-sm text-error">{balanceError}</p>
         )}
@@ -258,14 +244,6 @@ const ServicePaymentForm = ({ accountId }: ServicePaymentFormProps) => {
               />
             )}
           />
-        </div>
-
-        <div className="rounded-lg border border-border bg-surface p-4 text-xs leading-5 text-text-secondary">
-          <p className="font-semibold text-text">Números demostrativos de referencia</p>
-          <p className="mt-1">
-            {serviceBills.map((bill) => `${bill.serviceType}: ${bill.serviceNumber}`).join(" · ")}
-          </p>
-          <p className="mt-2">También puedes ingresar cualquier otro número.</p>
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">

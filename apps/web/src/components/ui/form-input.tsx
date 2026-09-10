@@ -24,19 +24,27 @@ type FormInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "classNa
     label?: React.ReactNode;
     className?: string;
     inputClassName?: string;
+    suffix?: React.ReactNode;
   };
 
 const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
-  ({ className, inputClassName, label, variant, ...props }, ref) => (
+  ({ className, inputClassName, label, suffix, variant, ...props }, ref) => (
     <FormItem className={className}>
       {label && <FormLabel>{label}</FormLabel>}
-      <FormControl>
-        <input
-          ref={ref}
-          className={cn(formInputVariants({ variant }), inputClassName)}
-          {...props}
-        />
-      </FormControl>
+      <div className="relative">
+        <FormControl>
+          <input
+            ref={ref}
+            className={cn(formInputVariants({ variant }), suffix && "pr-16", inputClassName)}
+            {...props}
+          />
+        </FormControl>
+        {suffix && (
+          <span className="pointer-events-none absolute inset-y-2 right-3 flex items-center border-l border-border pl-3 text-xs font-semibold text-text-secondary">
+            {suffix}
+          </span>
+        )}
+      </div>
       <FormMessage />
     </FormItem>
   ),

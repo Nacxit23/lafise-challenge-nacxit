@@ -76,7 +76,6 @@ const MenuItems = ({ onNavigate }: { onNavigate?: () => void }) => {
 const NavigationHeader = ({ onClose }: { onClose?: () => void }) => (
   <div className="flex items-start justify-between gap-4">
     <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">LAFISE</p>
       <h2 className="mt-2 text-lg font-semibold text-text">Menú principal</h2>
       <p className="mt-1 text-xs leading-5 text-text-secondary">
         Gestiona tu banca digital desde un solo lugar.

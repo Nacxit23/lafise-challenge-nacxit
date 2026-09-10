@@ -15,6 +15,7 @@ interface TransferSuccessProps {
   destinationLabel?: string;
   extraLabel?: string;
   extraValue?: string;
+  remainingBalance?: number | null;
 }
 
 const formatAmount = (value: number) =>
@@ -33,6 +34,7 @@ const TransferSuccess = ({
   destinationLabel = "Cuenta destino",
   extraLabel,
   extraValue,
+  remainingBalance,
 }: TransferSuccessProps) => (
   <section
     className="rounded-xl border border-border bg-white p-5 text-center shadow-sm sm:p-8"
@@ -68,6 +70,14 @@ const TransferSuccess = ({
             {transfer.transactionNumber}
           </dd>
         </div>
+        {remainingBalance !== undefined && remainingBalance !== null && (
+          <div>
+            <dt className="text-xs text-text-secondary">Saldo disponible</dt>
+            <dd className="mt-1 break-all text-sm font-semibold text-primary">
+              {formatAmount(remainingBalance)}
+            </dd>
+          </div>
+        )}
       </dl>
     </div>
 

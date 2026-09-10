@@ -1,19 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { toast } from "sonner";
 
 import useTransferListStore from "@/store/transferListStore";
 import {
   createDemoIncomeTransfer,
   DEMO_INCOME_INTERVAL_MS,
 } from "../../../helpers/demo-income.helper";
-
-const formatIncome = (value: number) =>
-  new Intl.NumberFormat("es-NI", {
-    style: "currency",
-    currency: "NIO",
-  }).format(value);
 
 /** Programa los créditos ficticios mientras el dashboard autenticado está activo. */
 const useDemoIncomeScheduler = (accountIds: readonly string[]) => {
@@ -43,9 +36,6 @@ const useDemoIncomeScheduler = (accountIds: readonly string[]) => {
         const transfer = createDemoIncomeTransfer(accountId, new Date(now));
 
         store.addDemoIncome(transfer, now);
-        toast.success("Ingreso de demostración recibido", {
-          description: `${formatIncome(transfer.amount.value)} acreditados a la cuenta ${accountId}.`,
-        });
       });
 
       const updatedStore = useTransferListStore.getState();

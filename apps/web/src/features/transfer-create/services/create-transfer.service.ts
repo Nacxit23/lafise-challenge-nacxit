@@ -14,9 +14,11 @@ export const createTransfer = async (payload: CreateTransferRequest): Promise<Tr
     description: response.description,
     bankDescription: response.bank_description,
     transactionType: response.transaction_type,
-    amount: response.amount,
-    origin: response.origin,
-    destination: response.destination,
-    transactionDate: response.transaction_date,
+    // El payload identifica los datos reales del flujo. El mock puede devolver
+    // valores de respaldo que no deben utilizarse como claves del store.
+    amount: payload.amount,
+    origin: payload.origin,
+    destination: payload.destination,
+    transactionDate: response.transaction_date ?? new Date().toISOString(),
   };
 };
