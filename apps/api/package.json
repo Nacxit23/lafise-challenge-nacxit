@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node start.js",
     "start-mock": "mockoon-cli start --data transfer-app-mock.json",
     "start-apidocs": "node index.js",
     "dev": "concurrently --kill-others-on-fail --names mock,apidocs \"mockoon-cli start --data transfer-app-mock.json\" \"node index.js\""

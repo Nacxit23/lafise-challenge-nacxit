@@ -2,7 +2,11 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 import { createAccountBalanceSlice } from "./transfer-list/account-balance.slice";
-import { createDemoIncomeSlice } from "./transfer-list/demo-income.slice";
+import {
+  calculateBalanceAdjustmentsByAccount,
+  removeLegacyDemoIncomeFromTransferList,
+  removeLegacyDemoIncomeTransfers,
+} from "./transfer-list/transfer-list-store.helper";
 import { createInitialTransferListState } from "./transfer-list/transfer-list-store.state";
 import type { TransferListStore } from "./transfer-list/transfer-list-store.type";
 import { createTransferMutationSlice } from "./transfer-list/transfer-mutation.slice";
@@ -21,11 +25,29 @@ const useTransferListStore = create<TransferListStore>()(
       ...createTransferQuerySlice(set, get, store),
       ...createAccountBalanceSlice(set, get, store),
       ...createTransferMutationSlice(set, get, store),
-      ...createDemoIncomeSlice(set, get, store),
       clearTransfers: () => set(createInitialTransferListState()),
     }),
     {
       name: "lafise-transfer-list",
+      version: 2,
+      migrate: (persistedState) => {
+        const previousState = (persistedState ?? {}) as Partial<TransferListStore> &
+          Record<string, unknown>;
+        const createdTransfersByAccount = removeLegacyDemoIncomeTransfers(
+          previousState.createdTransfersByAccount ?? {},
+        );
+        const migratedState = { ...previousState };
+
+        delete migratedState.lastDemoIncomeAtByAccount;
+
+        return {
+          ...migratedState,
+          transfers: removeLegacyDemoIncomeFromTransferList(previousState.transfers ?? []),
+          createdTransfersByAccount,
+          balanceAdjustmentsByAccount:
+            calculateBalanceAdjustmentsByAccount(createdTransfersByAccount),
+        } as TransferListStore;
+      },
     },
   ),
 );

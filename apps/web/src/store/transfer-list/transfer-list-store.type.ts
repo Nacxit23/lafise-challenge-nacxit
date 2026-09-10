@@ -19,8 +19,6 @@ interface TransferListStore {
   balanceLoadingByAccount: Record<string, boolean>;
   /** Error independiente de consulta de saldo para cada cuenta. */
   balanceErrorsByAccount: Record<string, string | null>;
-  /** Última acreditación automática del demo, expresada como timestamp. */
-  lastDemoIncomeAtByAccount: Record<string, number>;
   /** Cuenta cuyo historial se encuentra actualmente en pantalla. */
   selectedAccountId: string | null;
   isLoading: boolean;
@@ -36,10 +34,6 @@ interface TransferListStore {
   getAvailableBalance: (accountId: string) => number | null;
   /** Registra el débito de origen y, cuando aplica, el crédito de destino. */
   addTransfer: (transfer: Transfer, creditDestination: boolean) => void;
-  /** Crea el punto inicial del temporizador demo sin acreditar dinero. */
-  initializeDemoIncomeSchedule: (accountId: string, startedAt: number) => void;
-  /** Acredita y registra un ingreso automático de demostración. */
-  addDemoIncome: (transfer: Transfer, creditedAt: number) => void;
   /** Restablece completamente movimientos, saldos y temporizadores. */
   clearTransfers: () => void;
 }
@@ -56,7 +50,6 @@ type TransferListData = Pick<
   | "balanceAdjustmentsByAccount"
   | "balanceLoadingByAccount"
   | "balanceErrorsByAccount"
-  | "lastDemoIncomeAtByAccount"
   | "selectedAccountId"
   | "isLoading"
   | "error"
@@ -68,11 +61,9 @@ type AccountBalanceSlice = Pick<
   "loadAccountBalance" | "setBaseBalance" | "getAvailableBalance"
 >;
 type TransferMutationSlice = Pick<TransferListStore, "addTransfer">;
-type DemoIncomeSlice = Pick<TransferListStore, "initializeDemoIncomeSchedule" | "addDemoIncome">;
 
 export type {
   AccountBalanceSlice,
-  DemoIncomeSlice,
   TransferListData,
   TransferListStore,
   TransferMutationSlice,

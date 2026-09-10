@@ -17,7 +17,19 @@ const formatTransferDate = (date?: string) => {
     return date;
   }
 
-  return new Intl.DateTimeFormat("es-NI", { dateStyle: "short" }).format(parsedDate);
+  const dateParts = new Intl.DateTimeFormat("es-NI", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).formatToParts(parsedDate);
+  const getPart = (type: Intl.DateTimeFormatPartTypes) =>
+    dateParts.find((part) => part.type === type)?.value ?? "";
+  const dayPeriod = getPart("dayPeriod").replace(/\u00a0/g, " ");
+
+  return `${getPart("day")} de ${getPart("month")} de ${getPart("year")}, ${getPart("hour")}:${getPart("minute")} ${dayPeriod}`;
 };
 
 const isDebitTransfer = (transfer: Transfer) => transfer.transactionType.toLowerCase() === "debit";

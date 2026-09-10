@@ -1,6 +1,11 @@
 import type { StateCreator } from "zustand";
 
-import { createTransferVariants, mergeTransfers } from "./transfer-list-store.helper";
+import {
+  calculateAccountBalanceAdjustment,
+  createTransferVariants,
+  mergeTransfers,
+  normalizeTransferAmount,
+} from "./transfer-list-store.helper";
 import type { TransferListStore, TransferMutationSlice } from "./transfer-list-store.type";
 
 /** Responsabilidad: aplicar atómicamente una transferencia a origen y destino. */
@@ -12,38 +17,40 @@ const createTransferMutationSlice: StateCreator<
 > = (set) => ({
   addTransfer: (transfer, creditDestination) => {
     set((state) => {
-      const { debit, credit } = createTransferVariants(transfer);
+      const normalizedTransfer = normalizeTransferAmount(transfer);
+      const { debit, credit } = createTransferVariants(normalizedTransfer);
       const createdTransfersByAccount = {
         ...state.createdTransfersByAccount,
-        [transfer.origin]: mergeTransfers(
+        [normalizedTransfer.origin]: mergeTransfers(
           [debit],
-          state.createdTransfersByAccount[transfer.origin] ?? [],
+          state.createdTransfersByAccount[normalizedTransfer.origin] ?? [],
         ),
         ...(creditDestination
           ? {
-              [transfer.destination]: mergeTransfers(
+              [normalizedTransfer.destination]: mergeTransfers(
                 [credit],
-                state.createdTransfersByAccount[transfer.destination] ?? [],
+                state.createdTransfersByAccount[normalizedTransfer.destination] ?? [],
               ),
             }
           : {}),
       };
       const balanceAdjustmentsByAccount = {
         ...state.balanceAdjustmentsByAccount,
-        [transfer.origin]:
-          (state.balanceAdjustmentsByAccount[transfer.origin] ?? 0) - transfer.amount.value,
+        [normalizedTransfer.origin]: calculateAccountBalanceAdjustment(
+          createdTransfersByAccount[normalizedTransfer.origin],
+        ),
         ...(creditDestination
           ? {
-              [transfer.destination]:
-                (state.balanceAdjustmentsByAccount[transfer.destination] ?? 0) +
-                transfer.amount.value,
+              [normalizedTransfer.destination]: calculateAccountBalanceAdjustment(
+                createdTransfersByAccount[normalizedTransfer.destination],
+              ),
             }
           : {}),
       };
       const selectedTransfer =
-        state.selectedAccountId === transfer.origin
+        state.selectedAccountId === normalizedTransfer.origin
           ? debit
-          : creditDestination && state.selectedAccountId === transfer.destination
+          : creditDestination && state.selectedAccountId === normalizedTransfer.destination
             ? credit
             : null;
 
