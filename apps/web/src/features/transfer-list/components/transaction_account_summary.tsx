@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import logoLafise from "@/assets/images/auth/logo-LAFISE.svg";
+import useAccountAvailableBalance from "@/hooks/useAccountAvailableBalance";
 import useAccountStore from "@/store/accountStore";
 import useAuthStore from "@/store/authStore";
 import useTransferListStore from "@/store/transferListStore";
@@ -56,13 +57,8 @@ const TransactionAccountSummary = ({ accountId }: TransactionAccountSummaryProps
       loadAccount: state.loadAccount,
     })),
   );
-  const { baseBalance, balanceAdjustment, setBaseBalance } = useTransferListStore(
-    useShallow((state) => ({
-      baseBalance: state.baseBalancesByAccount[accountId],
-      balanceAdjustment: state.balanceAdjustmentsByAccount[accountId] ?? 0,
-      setBaseBalance: state.setBaseBalance,
-    })),
-  );
+  const setBaseBalance = useTransferListStore((state) => state.setBaseBalance);
+  const availableBalance = useAccountAvailableBalance(accountId);
 
   useEffect(() => {
     void loadAccount(accountId).then((loadedAccount) => {
@@ -73,9 +69,6 @@ const TransactionAccountSummary = ({ accountId }: TransactionAccountSummaryProps
   }, [accountId, loadAccount, setBaseBalance]);
 
   const currentAccount = selectedAccountId === accountId ? account : null;
-  const availableBalance =
-    baseBalance === undefined ? null : Math.max(baseBalance + balanceAdjustment, 0);
-
   if (isLoading || (currentAccount && availableBalance === null)) {
     return (
       <section className="rounded-xl border border-border bg-white p-5 text-sm text-text-secondary shadow-sm sm:p-6">

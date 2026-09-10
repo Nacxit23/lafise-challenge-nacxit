@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormField } from "@/components/ui/form";
 import { FormInput } from "@/components/ui/form-input";
 import type { Transfer } from "@/features/transfer-list/types/transfer.type";
+import useAccountAvailableBalance from "@/hooks/useAccountAvailableBalance";
 import useAuthStore from "@/store/authStore";
 import useTransferListStore from "@/store/transferListStore";
 import ConfirmTransfer from "./ConfirmTransfer";
@@ -31,23 +32,15 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
   const [pendingValues, setPendingValues] = useState<CreateTransferFormValues | null>(null);
   const [completedTransfer, setCompletedTransfer] = useState<Transfer | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
-  const {
-    baseBalance,
-    balanceAdjustment,
-    isBalanceLoading,
-    balanceError,
-    loadAccountBalance,
-    addTransfer,
-  } = useTransferListStore(
+  const { isBalanceLoading, balanceError, loadAccountBalance, addTransfer } = useTransferListStore(
     useShallow((state) => ({
-      baseBalance: state.baseBalancesByAccount[originAccount],
-      balanceAdjustment: state.balanceAdjustmentsByAccount[originAccount] ?? 0,
       isBalanceLoading: state.balanceLoadingByAccount[originAccount] ?? false,
       balanceError: state.balanceErrorsByAccount[originAccount],
       loadAccountBalance: state.loadAccountBalance,
       addTransfer: state.addTransfer,
     })),
   );
+  const availableBalance = useAccountAvailableBalance(originAccount);
   const form = useForm<CreateTransferFormValues>({
     resolver: zodResolver(createTransferSchema(originAccount)),
     defaultValues: {
@@ -55,9 +48,6 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
       amount: 1000,
     },
   });
-  const availableBalance =
-    baseBalance === undefined ? null : Math.max(baseBalance + balanceAdjustment, 0);
-
   useEffect(() => {
     void loadAccountBalance(originAccount);
   }, [loadAccountBalance, originAccount]);
@@ -167,6 +157,7 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
     return (
       <TransferSuccess
         transfer={completedTransfer}
+        remainingBalance={availableBalance}
         onCreateAnother={handleCreateAnother}
         onViewTransfers={() => router.push(`/account-transactions/${originAccount}`)}
       />
@@ -249,6 +240,7 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
             render={({ field }) => (
               <FormInput
                 label="Monto que desea transferir"
+                suffix="NIO"
                 type="number"
                 min="0.01"
                 step="0.01"

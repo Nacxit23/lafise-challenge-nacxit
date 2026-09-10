@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRightLeft, WalletCards } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -204,14 +204,6 @@ const CashWithdrawalForm = ({ accountId }: CashWithdrawalFormProps) => {
           </p>
         </div>
 
-        <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm leading-6 text-text-secondary">
-          <WalletCards className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
-          <p>
-            Este servicio es demostrativo. El monto se debitará localmente de tu cuenta y se
-            generará un código para simular el retiro.
-          </p>
-        </div>
-
         <div
           className="flex items-center justify-between gap-4 rounded-xl bg-primary/10 px-4 py-3"
           aria-live="polite"
@@ -238,11 +230,12 @@ const CashWithdrawalForm = ({ accountId }: CashWithdrawalFormProps) => {
           name="amount"
           render={({ field }) => (
             <FormInput
-              label="Monto del retiro"
+              label="Monto del retiro (NIO)"
+              suffix="NIO"
               type="number"
               min="100"
               step="100"
-              placeholder="100"
+              placeholder="C$ 100"
               value={Number.isNaN(field.value) ? "" : field.value}
               onBlur={field.onBlur}
               onChange={(event) => field.onChange(event.target.valueAsNumber)}

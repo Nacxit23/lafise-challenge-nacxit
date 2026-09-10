@@ -148,6 +148,7 @@ const TransferFilters = ({
                     render={({ field }) => (
                       <FormInput
                         label="Monto exacto"
+                        suffix="NIO"
                         type="number"
                         min="0.01"
                         step="0.01"
@@ -172,6 +173,7 @@ const TransferFilters = ({
                       render={({ field }) => (
                         <FormInput
                           label="Monto mínimo"
+                          suffix="NIO"
                           type="number"
                           min="0.01"
                           step="0.01"
@@ -194,6 +196,7 @@ const TransferFilters = ({
                       render={({ field }) => (
                         <FormInput
                           label="Monto máximo"
+                          suffix="NIO"
                           type="number"
                           min="0.01"
                           step="0.01"
