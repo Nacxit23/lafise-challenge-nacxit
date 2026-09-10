@@ -10,6 +10,10 @@ const createTransferQuerySlice: StateCreator<TransferListStore, [], [], Transfer
   get,
 ) => ({
   loadTransfers: async (accountId) => {
+    const previousState = get();
+    const cachedTransfers =
+      previousState.selectedAccountId === accountId ? previousState.transfers : [];
+
     set({ isLoading: true, error: null, selectedAccountId: accountId });
 
     try {
@@ -37,18 +41,16 @@ const createTransferQuerySlice: StateCreator<TransferListStore, [], [], Transfer
       }
 
       const createdTransfers = get().createdTransfersByAccount[accountId] ?? [];
+      const transfers = mergeTransfers(createdTransfers, cachedTransfers);
 
       set({
-        transfers: createdTransfers,
+        transfers,
         page: 0,
-        size: createdTransfers.length,
+        size: transfers.length,
         next: 0,
-        totalCount: createdTransfers.length,
+        totalCount: transfers.length,
         isLoading: false,
-        error:
-          createdTransfers.length > 0
-            ? null
-            : "No fue posible cargar los movimientos de la cuenta.",
+        error: transfers.length > 0 ? null : "No fue posible cargar los movimientos de la cuenta.",
       });
     }
   },

@@ -12,7 +12,6 @@ const createInitialTransferListState = (): TransferListData => ({
   balanceAdjustmentsByAccount: {},
   balanceLoadingByAccount: {},
   balanceErrorsByAccount: {},
-  lastDemoIncomeAtByAccount: {},
   selectedAccountId: null,
   isLoading: false,
   error: null,

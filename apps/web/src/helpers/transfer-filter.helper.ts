@@ -9,8 +9,8 @@ const formatMonthValue = (date: Date) =>
 
 const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
 
-const createDefaultTransferFilters = (date = new Date()): TransferFilterValues => ({
-  month: formatMonthValue(date),
+const createDefaultTransferFilters = (): TransferFilterValues => ({
+  month: "",
   transactionNumber: "",
   amountMode: "exact",
   exactAmount: undefined,
@@ -18,8 +18,9 @@ const createDefaultTransferFilters = (date = new Date()): TransferFilterValues =
   maximumAmount: undefined,
 });
 
-const getRecentMonthOptions = (date = new Date(), count = 10): MonthOption[] =>
-  Array.from({ length: count }, (_, index) => {
+const getRecentMonthOptions = (date = new Date(), count = 10): MonthOption[] => [
+  { label: "Todos los meses", value: "" },
+  ...Array.from({ length: count }, (_, index) => {
     const month = new Date(date.getFullYear(), date.getMonth() - index, 1);
     const label = new Intl.DateTimeFormat("es-NI", {
       month: "long",
@@ -30,7 +31,8 @@ const getRecentMonthOptions = (date = new Date(), count = 10): MonthOption[] =>
       label: capitalize(label),
       value: formatMonthValue(month),
     };
-  });
+  }),
+];
 
 const clearAdvancedTransferFilters = (filters: TransferFilterValues): TransferFilterValues => ({
   ...createDefaultTransferFilters(),
@@ -49,7 +51,7 @@ const filterTransfers = (transfers: Transfer[], filters: TransferFilterValues): 
 
     if (
       Number.isNaN(transactionDate.getTime()) ||
-      formatMonthValue(transactionDate) !== filters.month
+      (filters.month !== "" && formatMonthValue(transactionDate) !== filters.month)
     ) {
       return false;
     }
