@@ -3,6 +3,7 @@
 import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useShallow } from "zustand/react/shallow";
 import logoLafise from "@/assets/images/auth/logo-LAFISE.svg";
 
@@ -15,6 +16,7 @@ interface HeaderProps {
 }
 
 const Header = ({ onOpenMenu }: HeaderProps) => {
+  const router = useRouter();
   const { user, lastLoginAt, clearAuth } = useAuthStore(
     useShallow((state) => ({
       user: state.session?.user,
@@ -37,6 +39,11 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
     .map((name) => name[0])
     .join("")
     .toUpperCase();
+
+  const handleLogout = () => {
+    clearAuth();
+    router.replace("/");
+  };
 
   return (
     <header className="border-b border-primary-dark/30 bg-primary text-white shadow-sm">
@@ -83,7 +90,7 @@ const Header = ({ onOpenMenu }: HeaderProps) => {
           </div>
           <Button
             type="button"
-            onClick={clearAuth}
+            onClick={handleLogout}
             className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <LogOut className="size-4" aria-hidden="true" />

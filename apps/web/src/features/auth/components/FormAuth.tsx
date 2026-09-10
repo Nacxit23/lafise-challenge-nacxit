@@ -6,10 +6,12 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import lafiseLogo from "@/assets/images/auth/logo-LAFISE.svg";
 import useAuthStore from "@/store/authStore";
 
 const FormAuth = () => {
+  const router = useRouter();
   const signIn = useAuthStore((state) => state.signIn);
 
   const form = useForm<LoginForm>({
@@ -23,6 +25,8 @@ const FormAuth = () => {
   const handleSubmit = async (values: LoginForm) => {
     try {
       await signIn(values);
+
+      router.replace("/");
 
       toast.success("Sesión iniciada correctamente");
     } catch {
@@ -52,7 +56,7 @@ const FormAuth = () => {
           render={({ field }) => (
             <FormInput
               label="Usuario"
-              placeholder="josueperez26"
+              placeholder="Usuario"
               type="text"
               autoComplete="username"
               {...field}
