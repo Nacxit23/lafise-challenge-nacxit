@@ -6,7 +6,7 @@
   "scripts": {
     "start-mock": "mockoon-cli start --data transfer-app-mock.json",
     "start-apidocs": "node index.js",
-    "dev": "concurrently \"npm run start-mock\" \"npm run start-apidocs\""
+    "dev": "concurrently --kill-others-on-fail --names mock,apidocs \"mockoon-cli start --data transfer-app-mock.json\" \"node index.js\""
   },
   "author": "",
   "license": "ISC",

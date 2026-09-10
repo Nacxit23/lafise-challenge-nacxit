@@ -31,6 +31,45 @@
           "filePath": "",
           "databucketID": "",
           "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "username",
+              "value": "josueperez26",
+              "invert": false,
+              "operator": "equals"
+            },
+            {
+              "target": "body",
+              "modifier": "password",
+              "value": "lafiseDemouser",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "2b2d5e2b-1a4f-4b91-9dc6-7e5e42e6c003",
+          "body": "{\n  \"type\": \"https://tools.ietf.org/html/rfc7235#section-3.1\",\n  \"title\": \"Credenciales incorrectas\",\n  \"status\": 401\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Invalid demo credentials",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
           "rules": [],
           "rulesOperator": "OR",
           "disableTemplating": false,

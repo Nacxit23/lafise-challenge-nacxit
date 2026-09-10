@@ -4,7 +4,7 @@ import {
   formatTransferAmount,
   formatTransferDate,
   isDebitTransfer,
-  sortTransfersAscending,
+  sortTransfersByMostRecent,
 } from "../helpers/transfer-display.helper";
 import type { Transfer } from "../types/transfer.type";
 
@@ -19,7 +19,7 @@ const TransferMobileList = ({
   transfers,
   onSelectTransfer,
 }: TransferMobileListProps) => {
-  const sortedTransfers = sortTransfersAscending(transfers);
+  const sortedTransfers = sortTransfersByMostRecent(transfers);
 
   return (
     <section className="rounded-xl border border-border bg-white p-4 shadow-sm md:hidden">

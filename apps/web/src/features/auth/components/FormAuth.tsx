@@ -12,11 +12,10 @@ import useAuthStore from "@/store/authStore";
 const FormAuth = () => {
   const signIn = useAuthStore((state) => state.signIn);
 
-  //
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
@@ -28,7 +27,7 @@ const FormAuth = () => {
       toast.success("Sesión iniciada correctamente");
     } catch {
       toast.error("No fue posible iniciar sesión", {
-        description: "Verifica tu correo y contraseña e inténtalo nuevamente.",
+        description: "Verifica tu usuario y contraseña e inténtalo nuevamente.",
       });
     }
   };
@@ -48,14 +47,14 @@ const FormAuth = () => {
         </div>
 
         <FormField
-          name="email"
+          name="username"
           control={form.control}
           render={({ field }) => (
             <FormInput
-              label="Correo electrónico"
-              placeholder="correo@ejemplo.com"
-              type="email"
-              autoComplete="email"
+              label="Usuario"
+              placeholder="josueperez26"
+              type="text"
+              autoComplete="username"
               {...field}
             />
           )}
@@ -77,8 +76,7 @@ const FormAuth = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-md bg-black px-4 py-2 text-white transition-opacity 
-          disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md bg-primary px-4 py-2 text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? "Ingresando..." : "Ingresar"}
         </button>
