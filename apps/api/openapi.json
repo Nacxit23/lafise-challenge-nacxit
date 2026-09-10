@@ -251,7 +251,7 @@
                           "bank_description": "LAFISE",
                           "transaction_type": "Credit",
                           "amount": {
-                            "currency": "USD",
+                            "currency": "NIO",
                             "value": 1000
                           },
                           "origin": "123456789",
@@ -322,7 +322,7 @@
                       "bank_description": "LAFISE",
                       "transaction_type": "Credit",
                       "amount": {
-                        "currency": "USD",
+                        "currency": "NIO",
                         "value": 1000
                       },
                       "origin": "123456789",
@@ -642,7 +642,7 @@
             "bank_description": "LAFISE",
             "transaction_type": "Credit",
             "amount": {
-              "currency": "USD",
+              "currency": "NIO",
               "value": 1000
             }
           }
