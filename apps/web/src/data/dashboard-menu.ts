@@ -15,8 +15,8 @@ export const dashboardMenuItems: DashboardMenuItem[] = [
     icon: WalletCards,
   },
   {
-    label: "Pagar",
-    description: "Realiza tus pagos de forma segura",
+    label: "Servicios",
+    description: "Accede a servicios demostrativos",
     href: "/pagar",
     icon: CreditCard,
   },

@@ -89,7 +89,9 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
       const message = `Saldo disponible: ${formatBalance(latestBalance)}.`;
 
       form.setError("amount", { type: "manual", message: "El monto supera el saldo disponible" });
-      toast.error("Fondos insuficientes", { description: message });
+      toast.error("No puede realizar la transacción por saldo insuficiente", {
+        description: message,
+      });
       return null;
     }
 
@@ -174,8 +176,11 @@ const FormTransfer = ({ originAccount }: FormTransferProps) => {
   if (pendingValues && availableBalance !== null) {
     return (
       <ConfirmTransfer
-        originAccount={originAccount}
-        values={pendingValues}
+        amount={pendingValues.amount}
+        originLabel="Cuenta origen"
+        originValue={originAccount}
+        destinationLabel="Cuenta destino"
+        destinationValue={pendingValues.destination}
         availableBalance={availableBalance}
         isSubmitting={isConfirming}
         onBack={() => setPendingValues(null)}

@@ -9,6 +9,12 @@ interface TransferSuccessProps {
   transfer: Transfer;
   onCreateAnother: () => void;
   onViewTransfers: () => void;
+  title?: string;
+  description?: string;
+  amountLabel?: string;
+  destinationLabel?: string;
+  extraLabel?: string;
+  extraValue?: string;
 }
 
 const formatAmount = (value: number) =>
@@ -17,7 +23,17 @@ const formatAmount = (value: number) =>
     currency: "NIO",
   }).format(value);
 
-const TransferSuccess = ({ transfer, onCreateAnother, onViewTransfers }: TransferSuccessProps) => (
+const TransferSuccess = ({
+  transfer,
+  onCreateAnother,
+  onViewTransfers,
+  title = "Envío realizado con éxito",
+  description = "La transacción fue procesada y registrada correctamente.",
+  amountLabel = "Monto enviado",
+  destinationLabel = "Cuenta destino",
+  extraLabel,
+  extraValue,
+}: TransferSuccessProps) => (
   <section
     className="rounded-xl border border-border bg-white p-5 text-center shadow-sm sm:p-8"
     aria-live="polite"
@@ -27,21 +43,25 @@ const TransferSuccess = ({ transfer, onCreateAnother, onViewTransfers }: Transfe
     </div>
 
     <p className="mt-5 text-sm font-medium text-primary">Paso 3 de 3</p>
-    <h2 className="mt-1 text-2xl font-semibold text-text">Envío realizado con éxito</h2>
-    <p className="mt-2 text-sm text-text-secondary">
-      La transacción fue procesada y registrada correctamente.
-    </p>
+    <h2 className="mt-1 text-2xl font-semibold text-text">{title}</h2>
+    <p className="mt-2 text-sm text-text-secondary">{description}</p>
 
     <div className="mx-auto mt-6 max-w-md rounded-xl bg-primary/10 px-4 py-5">
-      <p className="text-xs text-text-secondary">Monto enviado</p>
+      <p className="text-xs text-text-secondary">{amountLabel}</p>
       <p className="mt-1 text-2xl font-semibold text-primary">
         {formatAmount(transfer.amount.value)}
       </p>
       <dl className="mt-5 grid gap-4 border-t border-primary/15 pt-4 text-left sm:grid-cols-2">
         <div>
-          <dt className="text-xs text-text-secondary">Cuenta destino</dt>
+          <dt className="text-xs text-text-secondary">{destinationLabel}</dt>
           <dd className="mt-1 break-all text-sm font-medium text-text">{transfer.destination}</dd>
         </div>
+        {extraLabel && extraValue && (
+          <div>
+            <dt className="text-xs text-text-secondary">{extraLabel}</dt>
+            <dd className="mt-1 break-all text-sm font-medium text-text">{extraValue}</dd>
+          </div>
+        )}
         <div>
           <dt className="text-xs text-text-secondary">Referencia</dt>
           <dd className="mt-1 break-all text-sm font-medium text-text">

@@ -3,12 +3,18 @@
 import { ArrowLeft, Send } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import type { CreateTransferFormValues } from "../schemas/create-transfer.schema";
 
 interface ConfirmTransferProps {
-  originAccount: string;
-  values: CreateTransferFormValues;
-  availableBalance: number;
+  amount: number;
+  originLabel: string;
+  originValue: string;
+  destinationLabel: string;
+  destinationValue: string;
+  availableBalance?: number;
+  title?: string;
+  description?: string;
+  amountLabel?: string;
+  confirmLabel?: string;
   isSubmitting: boolean;
   onBack: () => void;
   onConfirm: () => void;
@@ -21,9 +27,16 @@ const formatAmount = (value: number) =>
   }).format(value);
 
 const ConfirmTransfer = ({
-  originAccount,
-  values,
+  amount,
+  originLabel,
+  originValue,
+  destinationLabel,
+  destinationValue,
   availableBalance,
+  title = "Confirmar envío",
+  description = "Revisa cuidadosamente los datos antes de realizar la transacción.",
+  amountLabel = "Monto a transferir",
+  confirmLabel = "Confirmar envío",
   isSubmitting,
   onBack,
   onConfirm,
@@ -31,33 +44,33 @@ const ConfirmTransfer = ({
   <section className="space-y-6 rounded-xl border border-border bg-white p-5 shadow-sm sm:p-6">
     <div>
       <p className="text-sm font-medium text-primary">Paso 2 de 3</p>
-      <h2 className="mt-1 text-xl font-semibold text-text">Confirmar envío</h2>
-      <p className="mt-1 text-sm text-text-secondary">
-        Revisa cuidadosamente los datos antes de realizar la transacción.
-      </p>
+      <h2 className="mt-1 text-xl font-semibold text-text">{title}</h2>
+      <p className="mt-1 text-sm text-text-secondary">{description}</p>
     </div>
 
     <div className="rounded-xl bg-primary/10 px-4 py-5 text-center">
-      <p className="text-xs text-text-secondary">Monto a transferir</p>
-      <p className="mt-1 text-2xl font-semibold text-primary">{formatAmount(values.amount)}</p>
+      <p className="text-xs text-text-secondary">{amountLabel}</p>
+      <p className="mt-1 text-2xl font-semibold text-primary">{formatAmount(amount)}</p>
       <p className="mt-1 text-xs font-medium text-primary-dark">NIO</p>
     </div>
 
     <dl className="grid gap-4 sm:grid-cols-2">
       <div className="rounded-lg bg-surface p-4">
-        <dt className="text-xs text-text-secondary">Cuenta origen</dt>
-        <dd className="mt-1 break-all font-medium text-text">{originAccount}</dd>
+        <dt className="text-xs text-text-secondary">{originLabel}</dt>
+        <dd className="mt-1 break-all font-medium text-text">{originValue}</dd>
       </div>
       <div className="rounded-lg bg-surface p-4">
-        <dt className="text-xs text-text-secondary">Cuenta destino</dt>
-        <dd className="mt-1 break-all font-medium text-text">{values.destination}</dd>
+        <dt className="text-xs text-text-secondary">{destinationLabel}</dt>
+        <dd className="mt-1 break-all font-medium text-text">{destinationValue}</dd>
       </div>
-      <div className="rounded-lg bg-surface p-4 sm:col-span-2">
-        <dt className="text-xs text-text-secondary">Saldo disponible después del envío</dt>
-        <dd className="mt-1 font-medium text-primary">
-          {formatAmount(Math.max(availableBalance - values.amount, 0))}
-        </dd>
-      </div>
+      {availableBalance !== undefined && (
+        <div className="rounded-lg bg-surface p-4 sm:col-span-2">
+          <dt className="text-xs text-text-secondary">Saldo disponible después del envío</dt>
+          <dd className="mt-1 font-medium text-primary">
+            {formatAmount(Math.max(availableBalance - amount, 0))}
+          </dd>
+        </div>
+      )}
     </dl>
 
     <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
@@ -72,7 +85,7 @@ const ConfirmTransfer = ({
         className="bg-primary text-white hover:bg-primary-dark"
       >
         <Send className="size-4" aria-hidden="true" />
-        {isSubmitting ? "Enviando..." : "Confirmar envío"}
+        {isSubmitting ? "Procesando..." : confirmLabel}
       </Button>
     </div>
   </section>
