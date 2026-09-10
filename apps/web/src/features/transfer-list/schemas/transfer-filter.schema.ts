@@ -7,7 +7,9 @@ const optionalPositiveAmount = z
 
 const transferFilterSchema = z
   .object({
-    month: z.string().regex(/^\d{4}-\d{2}$/, "Selecciona un mes válido"),
+    month: z
+      .string()
+      .refine((value) => value === "" || /^\d{4}-\d{2}$/.test(value), "Selecciona un mes válido"),
     transactionNumber: z.string().refine(
       (value) => {
         const transactionNumber = value.trim();

@@ -14,7 +14,7 @@ saldo disponible = saldo base remoto + ajustes locales acumulados
 ```
 
 - `baseBalancesByAccount`: último saldo obtenido mediante `GET /accounts/{id}`.
-- `balanceAdjustmentsByAccount`: suma de movimientos creados en el navegador.
+- `balanceAdjustmentsByAccount`: suma derivada de los movimientos creados en el navegador.
 - `getAvailableBalance(accountId)`: devuelve el resultado o `null` cuando todavía
   no se ha consultado el saldo base.
 
@@ -32,18 +32,19 @@ incluya en su saldo remoto.
 - `addTransfer` registra un `Debit` en el origen. Si el destino pertenece a los
   productos conocidos, también registra un `Credit` y aumenta su ajuste.
 
-## Ingresos automáticos del demo
+El monto de cada movimiento se normaliza como una magnitud positiva y su tipo
+(`Debit` o `Credit`) determina el signo contable. El ajuste se reconstruye desde
+los movimientos para evitar duplicados o desincronización entre historial y saldo.
 
-`lastDemoIncomeAtByAccount` mantiene un temporizador independiente por cuenta.
-`addDemoIncome` registra el crédito y actualiza el ajuste de saldo. Esta lógica es
-exclusiva de la demostración web y no emite notificaciones.
+La versión 2 de la persistencia elimina los ingresos automáticos que generaban
+versiones anteriores del demo, limpia también el historial visible y vuelve a
+calcular los ajustes legítimos.
 
 ## Organización
 
 - `transfer-query.slice.ts`: consulta y combinación del historial.
 - `account-balance.slice.ts`: carga y cálculo de saldos.
 - `transfer-mutation.slice.ts`: débito y crédito de transferencias.
-- `demo-income.slice.ts`: créditos automáticos demostrativos.
 - `transfer-list-store.helper.ts`: funciones puras para combinar y transformar.
 - `transfer-list-store.state.ts`: estado inicial reutilizable.
 - `transfer-list-store.type.ts`: contrato público documentado.
