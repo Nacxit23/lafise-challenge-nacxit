@@ -17,6 +17,8 @@ Para ejecutar el mock de manera individual utiliza `npm run start-mock`. Esto in
 
 Si deseas ver la documentación de la api de manera individual, ejecuta `npm run start-apidocs`. Esto levantará un sitio de swagger UI en `localhost:5567`.
 
+`index.js` también expone las rutas del mock como una aplicación Express compatible con Vercel. Todas las rutas responden el preflight `OPTIONS` e incluyen los encabezados CORS necesarios para que el frontend publicado pueda consumirlas directamente.
+
 Desde la raíz del monorepo también puedes ejecutar:
 
 ```bash
