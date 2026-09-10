@@ -17,7 +17,7 @@ export const dashboardMenuItems: DashboardMenuItem[] = [
   {
     label: "Servicios",
     description: "Accede a servicios demostrativos",
-    href: "/pagar",
+    href: "/services",
     icon: CreditCard,
   },
 ];

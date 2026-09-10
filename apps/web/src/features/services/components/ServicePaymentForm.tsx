@@ -247,7 +247,7 @@ const ServicePaymentForm = ({ accountId }: ServicePaymentFormProps) => {
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
-          <Button type="button" variant="outline" onClick={() => router.push("/pagar")}>
+          <Button type="button" variant="outline" onClick={() => router.push("/services")}>
             Cancelar
           </Button>
           <Button

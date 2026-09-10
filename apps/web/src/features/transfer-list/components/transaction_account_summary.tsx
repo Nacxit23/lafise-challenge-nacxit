@@ -36,12 +36,12 @@ const accountActions = [
   },
   {
     label: "Pagar servicios",
-    href: () => "/pago-servicios",
+    href: () => "/service-payments",
     icon: Lightbulb,
   },
   {
     label: "Recargar celular",
-    href: () => "/recargas-celulares",
+    href: () => "/mobile-recharges",
     icon: Smartphone,
   },
 ];

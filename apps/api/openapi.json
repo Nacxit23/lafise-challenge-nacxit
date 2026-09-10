@@ -38,31 +38,33 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "email",
+                  "username",
                   "password"
                 ],
                 "properties": {
-                  "email": {
+                  "username": {
                     "type": "string",
-                    "format": "email",
-                    "example": "usuario@lafise.com"
+                    "example": "josueperez26"
                   },
                   "password": {
                     "type": "string",
                     "format": "password",
-                    "example": "123456"
+                    "example": "lafiseDemouser"
                   }
                 }
               },
               "examples": {
                 "Example login": {
                   "value": {
-                    "email": "usuario@lafise.com",
-                    "password": "123456"
+                    "username": "josueperez26",
+                    "password": "lafiseDemouser"
                   }
                 }
               }
             }
+          },
+          "401": {
+            "description": "Invalid demo credentials"
           }
         },
         "responses": {
@@ -505,19 +507,18 @@
         "type": "object",
         "description": "Credentials used to authenticate the challenge user.",
         "properties": {
-          "email": {
+          "username": {
             "type": "string",
-            "format": "email",
-            "example": "josueperez@example.com"
+            "example": "josueperez26"
           },
           "password": {
             "type": "string",
             "format": "password",
-            "example": "lafisechallenger"
+            "example": "lafiseDemouser"
           }
         },
         "required": [
-          "email",
+          "username",
           "password"
         ]
       },

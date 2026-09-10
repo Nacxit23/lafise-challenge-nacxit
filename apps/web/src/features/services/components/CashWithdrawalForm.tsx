@@ -164,7 +164,7 @@ const CashWithdrawalForm = ({ accountId }: CashWithdrawalFormProps) => {
         code={withdrawalCode}
         accountId={accountId}
         onCreateAnother={handleCreateAnother}
-        onViewServices={() => router.push("/pagar")}
+        onViewServices={() => router.push("/services")}
       />
     );
   }
@@ -246,7 +246,7 @@ const CashWithdrawalForm = ({ accountId }: CashWithdrawalFormProps) => {
         />
 
         <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
-          <Button type="button" variant="outline" onClick={() => router.push("/pagar")}>
+          <Button type="button" variant="outline" onClick={() => router.push("/services")}>
             Cancelar
           </Button>
           <Button

@@ -1,7 +1,7 @@
 import { Banknote, CreditCard, ReceiptText, Smartphone } from "lucide-react";
 import Link from "next/link";
 
-export default function PagarPage() {
+export default function ServicesPage() {
   return (
     <div className="min-h-full bg-surface px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-7xl space-y-8">
@@ -24,7 +24,7 @@ export default function PagarPage() {
             </p>
           </article>
           <Link
-            href="/retiro-sin-tarjeta"
+            href="/cardless-withdrawal"
             className="rounded-xl border border-border bg-white p-5 shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-6"
           >
             <div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -39,7 +39,7 @@ export default function PagarPage() {
             </span>
           </Link>
           <Link
-            href="/recargas-celulares"
+            href="/mobile-recharges"
             className="rounded-xl border border-border bg-white p-5 shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-6"
           >
             <div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -54,7 +54,7 @@ export default function PagarPage() {
             </span>
           </Link>
           <Link
-            href="/pago-servicios"
+            href="/service-payments"
             className="rounded-xl border border-border bg-white p-5 shadow-sm transition-colors hover:border-primary/40 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:p-6"
           >
             <div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">

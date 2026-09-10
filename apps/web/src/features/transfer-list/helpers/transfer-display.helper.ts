@@ -24,19 +24,19 @@ const isDebitTransfer = (transfer: Transfer) => transfer.transactionType.toLower
 
 const getTransferTimestamp = (date?: string) => {
   if (!date) {
-    return Number.POSITIVE_INFINITY;
+    return Number.NEGATIVE_INFINITY;
   }
 
   const timestamp = new Date(date).getTime();
 
-  return Number.isNaN(timestamp) ? Number.POSITIVE_INFINITY : timestamp;
+  return Number.isNaN(timestamp) ? Number.NEGATIVE_INFINITY : timestamp;
 };
 
-const sortTransfersAscending = (transfers: Transfer[]) =>
+const sortTransfersByMostRecent = (transfers: Transfer[]) =>
   [...transfers].sort(
     (firstTransfer, secondTransfer) =>
-      getTransferTimestamp(firstTransfer.transactionDate) -
-      getTransferTimestamp(secondTransfer.transactionDate),
+      getTransferTimestamp(secondTransfer.transactionDate) -
+      getTransferTimestamp(firstTransfer.transactionDate),
   );
 
-export { formatTransferAmount, formatTransferDate, isDebitTransfer, sortTransfersAscending };
+export { formatTransferAmount, formatTransferDate, isDebitTransfer, sortTransfersByMostRecent };
