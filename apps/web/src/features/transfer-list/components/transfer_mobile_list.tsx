@@ -62,8 +62,11 @@ const TransferMobileList = ({
                   <span className="mt-0.5 block truncate text-xs text-text-secondary">
                     {transfer.bankDescription || "Banco"}
                   </span>
-                  <span className="mt-1 block text-xs text-text-secondary">
-                    {formatTransferDate(transfer.transactionDate)} · #{transfer.transactionNumber}
+                  <span className="mt-1 flex flex-col gap-0.5 text-[11px] leading-4 text-text-secondary">
+                    <span className="break-words">
+                      {formatTransferDate(transfer.transactionDate)}
+                    </span>
+                    <span className="tabular-nums">Ref. #{transfer.transactionNumber}</span>
                   </span>
                 </span>
 
