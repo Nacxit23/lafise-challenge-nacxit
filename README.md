@@ -26,10 +26,10 @@ npm install --prefix apps/api
 Crea el archivo apps/web/.env.local con:
 
 ```env
-API_URL=http://localhost:5566
+NEXT_PUBLIC_API_URL=http://localhost:5566
 ```
 
-El frontend utiliza la ruta proxy de Next.js /api/backend para comunicarse con el mock y evitar problemas de CORS.
+El cliente HTTP utiliza esta variable como URL base para comunicarse directamente con el mock API.
 
 ### Ejecutar la aplicación completa
 
@@ -283,10 +283,10 @@ La persistencia permite conservar operaciones simuladas al navegar o recargar. E
 Configura la variable de entorno:
 
 ```env
-API_URL=https://tu-backend.onrender.com
+NEXT_PUBLIC_API_URL=https://tu-backend.onrender.com
 ```
 
-Debe apuntar al backend público, no al dominio de Vercel. El frontend accede al backend por /api/backend, por lo que el navegador no necesita una petición CORS directa.
+Debe apuntar al backend público, no al dominio del frontend en Vercel. Next.js incorpora las variables `NEXT_PUBLIC_*` durante el build, por lo que es necesario crear un nuevo deployment después de modificarla. El backend debe permitir peticiones CORS desde `https://lafise-challenge-nacxit.vercel.app`.
 
 ### Mock API en Render o Railway
 
