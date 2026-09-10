@@ -1,9 +1,10 @@
 import axios from "axios";
 
+const apiBaseUrl =
+  process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/+$/, "") || "http://localhost:5566";
+
 export const api = axios.create({
-  // El navegador consume una ruta del mismo dominio. Next.js reenvía la
-  // solicitud al mock y evita que CORS dependa del proveedor del backend.
-  baseURL: "/api/backend",
+  baseURL: apiBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },
